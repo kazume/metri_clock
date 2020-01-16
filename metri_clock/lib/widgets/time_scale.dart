@@ -11,27 +11,38 @@ import 'package:provider/provider.dart';
 /// The time as scale.
 class TimeScale extends StatefulWidget {
   TimeScale({key: Key}) : super(key: key);
+  final _timeScaleState = _TimeScaleState();
 
   @override
-  _TimeScaleState createState() => _TimeScaleState();
+  _TimeScaleState createState() => _timeScaleState;
+
+  void updateHeight(double height) {
+    _timeScaleState.updateHeight(height);
+  }
 }
 
 class _TimeScaleState extends State<TimeScale> {
   ScrollController controller;
   StreamSubscription subscription;
+  double containerHeight;
+
+  void updateHeight(double height) {
+    containerHeight = height;
+    _setInitialScrollPosition(height);
+  }
 
   @override
   void didChangeDependencies() {
-    final screenHeight = MediaQuery.of(context).size.height;
+    //final screenHeight = MediaQuery.of(context).size.height;
     controller = ScrollController(
       initialScrollOffset: calculatePosition(
         DateTime.now(),
-        screenHeight,
+        containerHeight,
       ),
     );
     subscription = Provider.of<ClockBloc>(context).animationDateTime.listen(
       (dateTime) {
-        final newOffset = calculatePosition(dateTime, screenHeight);
+        final newOffset = calculatePosition(dateTime, containerHeight);
         if (controller != null &&
             controller.hasClients &&
             controller.position.haveDimensions) {
@@ -43,6 +54,17 @@ class _TimeScaleState extends State<TimeScale> {
       },
     );
     super.didChangeDependencies();
+  }
+
+  void _setInitialScrollPosition(double position) {
+    final newOffset = calculatePosition(DateTime.now(), containerHeight);
+    if (controller != null &&
+        controller.hasClients &&
+        controller.position.haveDimensions) {
+      // checking haveDimensions prevents a NoSuchMethodError: The method '>'
+      // was called on null. when calling controller.animateTo()
+      controller.jumpTo(newOffset);
+    }
   }
 
   @override
@@ -60,10 +82,12 @@ class _TimeScaleState extends State<TimeScale> {
             : lightTheme;
     final screenHeight = MediaQuery.of(context).size.height;
     final pixelsPerMinute = (screenHeight / 24 / 5).round().toDouble();
+    print('screenheight = $screenHeight');
+    print('pixelsPerMinute = $pixelsPerMinute');
     return Padding(
       padding: EdgeInsets.only(left: paddingLeft),
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        //physics: NeverScrollableScrollPhysics(),
         controller: controller,
         itemBuilder: (context, index) {
           return Row(
@@ -120,14 +144,13 @@ class _TimeScaleState extends State<TimeScale> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: colors[ThemeElement.background]
-                            .withOpacity(0.35),
+                        color:
+                            colors[ThemeElement.background].withOpacity(0.35),
                         spreadRadius: 0.0,
                         blurRadius: 5.0,
                       )
                     ],
-                    borderRadius:
-                        BorderRadius.all(Radius.elliptical(60, 20)),
+                    borderRadius: BorderRadius.all(Radius.elliptical(60, 20)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -157,6 +180,7 @@ double calculatePosition(
   DateTime dateTime,
   double screenHeight,
 ) {
+  if (screenHeight == null) return 0.0;
   final pixelsPerMinute = (screenHeight / 24 / 5).round().toDouble();
   // the scale begins 25' before 0
   final scaleStart = pixelsPerMinute * 25;
@@ -166,6 +190,6 @@ double calculatePosition(
   return scaleStart +
       minutes * pixelsPerMinute +
       oneDay -
-      (screenHeight / 2) +
-      pixelsPerMinute;
+      (screenHeight / 2) + pixelsPerMinute/2/* +
+      pixelsPerMinute*/;
 }

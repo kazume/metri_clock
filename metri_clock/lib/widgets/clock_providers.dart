@@ -14,7 +14,6 @@ class ClockProviders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('');
     return MultiProvider(
       providers: [
         Provider<ClockBloc>(
