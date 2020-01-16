@@ -70,9 +70,7 @@ class _TimeScaleState extends State<TimeScale> {
                   Dash.medium(),
                   Dash.short(),
                   Dash.short(),
-                  Dash.long(
-                    themeElement: ThemeElement.timeScalePrimary,
-                  ),
+                  Dash.long(themeElement: ThemeElement.timeScalePrimary),
                   Dash.short(),
                   Dash.short(),
                   Dash.medium(),
