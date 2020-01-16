@@ -57,7 +57,7 @@ class _TimeScaleState extends State<TimeScale> {
     return Padding(
       padding: EdgeInsets.only(left: paddingLeft),
       child: ListView.builder(
-        //physics: NeverScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         controller: controller,
         itemBuilder: (context, index) {
           return Row(
