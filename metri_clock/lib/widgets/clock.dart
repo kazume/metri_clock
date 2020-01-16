@@ -49,7 +49,7 @@ class _ClockState extends State<Clock> {
               padding: EdgeInsets.only(left: paddingLeft),
               child: Container(
                 height: pixelsPerMinute,
-                width: DashWidth.LONG.toDouble(),
+                width: DashWidth.LONG.toDouble() + 2.0, // +2.0 px to create overlap
                 color: colors[ThemeElement.primary],
               ),
             ),
