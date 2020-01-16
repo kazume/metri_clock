@@ -13,15 +13,15 @@ class Clock extends StatefulWidget {
 }
 
 class _ClockState extends State<Clock> {
-  final containerKey = GlobalKey();
-  TimeScale timeScale = TimeScale(key: UniqueKey());
+  final _containerKey = GlobalKey();
+  TimeScale _timeScale = TimeScale(key: UniqueKey());
 
   @override
   void didChangeDependencies() {
     // get the height of the ClockCustomizer and forward it to the TimeScale
     // so it calculates the position of the DateTime correctly
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => timeScale.updateHeight(containerKey.currentContext.size.height),
+      (_) => _timeScale.updateHeight(_containerKey.currentContext.size.height),
     );
     super.didChangeDependencies();
   }
@@ -34,14 +34,14 @@ class _ClockState extends State<Clock> {
             ? darkTheme
             : lightTheme;
     return Container(
-      key: containerKey,
+      key: _containerKey,
       color: colors[ThemeElement.background],
       child: Stack(
         children: [
           // the needle, time, weather and date widgets
           TimeNeedle(),
           // the scale on the left of the screen, including the hour as text
-          timeScale,
+          _timeScale,
           // the small part of the needle that needs to overlap the TimeScale
           Align(
             alignment: Alignment.centerLeft,

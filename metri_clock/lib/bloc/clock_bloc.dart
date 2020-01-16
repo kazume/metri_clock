@@ -48,7 +48,8 @@ class ClockBloc {
     // determine the closest 1000 millis that contains the leadingAnimationDuration
     if (millisToGoRoundedUp == _triggerThresholdInMillis) {
       final delay = Duration(
-          milliseconds: millisToGo - animationLeadingDuration.inMilliseconds);
+        milliseconds: millisToGo - animationLeadingDuration.inMilliseconds,
+      );
       final now = DateTime.now();
       // add millis to get the next minute (we use the rounded up one to be on
       // the safe side - we're not showing seconds anyway)

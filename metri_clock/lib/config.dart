@@ -11,10 +11,10 @@ final spaceBtnHiLowAndWeather = 5.0;
 final spaceBtnTimeAndAmPm = 2.0;
 final amPmTopPadding = 11.0;
 
-// the different dash widths
-final longDashWidth = 60.0;
-final mediumDashWidth = 30.0;
-final shortDashWidth = 30.0;
+// the different dash widths (opted for only 2 different sizes in the end)
+final longDashWidth = 60.0; // hour and half-hour
+final mediumDashWidth = 30.0; // 15-minute
+final shortDashWidth = 30.0; // the rest
 
 // the font size and weight of the main time text on the center right
 final largeFontSize = 70.0;

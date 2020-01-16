@@ -20,7 +20,7 @@ class TimeNeedle extends StatelessWidget {
     final clockModel = Provider.of<ClockModel>(context);
     final clockBloc = Provider.of<ClockBloc>(context);
     final weather =
-        '${clockModel.weatherString}, ${clockModel.temperature.toInt()}°';//${clockModel.unitString*}';
+        '${clockModel.weatherString}, ${clockModel.temperature.toInt()}°';
     final lowHigh = '{${clockModel.low.toInt()}-${clockModel.high.toInt()}}';
     return CustomMultiChildLayout(
       delegate: ClockLayoutDelegate(clockModel),
@@ -32,10 +32,10 @@ class TimeNeedle extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (clockModel.is24HourFormat) {
-                  return buildTime24(
+                  return _buildTime24(
                       snapshot.data, colors[ThemeElement.primary]);
                 } else {
-                  return buildTime12(
+                  return _buildTime12(
                       snapshot.data, colors[ThemeElement.primary]);
                 }
               } else {
@@ -53,7 +53,7 @@ class TimeNeedle extends StatelessWidget {
               stream: clockBloc.dateTime,
               builder: (context, snapshot) {
                 if (!clockModel.is24HourFormat && snapshot.hasData) {
-                  return buildAmPm(
+                  return _buildAmPm(
                       snapshot.data, colors[ThemeElement.secondary]);
                 }
                 return Container();
@@ -153,50 +153,50 @@ class TimeNeedle extends StatelessWidget {
       ],
     );
   }
-}
 
-// Widget builder functions
+  // Widget builder functions
 
-Widget buildAmPm(DateTime dateTime, Color color) {
-  final amPm = DateFormat('aa').format(dateTime);
-  return Text(
-    amPm,
-    style: TextStyle(
-      fontFamily: 'Roboto',
-      fontWeight: largeFontWeight,
-      fontSize: miniFontSize,
-      letterSpacing: -0.7,
-      color: color,
-    ),
-  );
-}
+  Widget _buildAmPm(DateTime dateTime, Color color) {
+    final amPm = DateFormat('aa').format(dateTime);
+    return Text(
+      amPm,
+      style: TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: largeFontWeight,
+        fontSize: miniFontSize,
+        letterSpacing: -0.7,
+        color: color,
+      ),
+    );
+  }
 
-Widget buildTime12(DateTime dateTime, Color color) {
-  final hour = DateFormat('h').format(dateTime);
-  final minute = DateFormat('mm').format(dateTime);
-  return Text(
-    '$hour:$minute',
-    style: TextStyle(
-      fontFamily: 'Roboto',
-      fontWeight: largeFontWeight,
-      fontSize: largeFontSize,
-      letterSpacing: -2.0,
-      color: color,
-    ),
-  );
-}
+  Widget _buildTime12(DateTime dateTime, Color color) {
+    final hour = DateFormat('h').format(dateTime);
+    final minute = DateFormat('mm').format(dateTime);
+    return Text(
+      '$hour:$minute',
+      style: TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: largeFontWeight,
+        fontSize: largeFontSize,
+        letterSpacing: -2.0,
+        color: color,
+      ),
+    );
+  }
 
-Widget buildTime24(DateTime dateTime, Color color) {
-  final hour = DateFormat('HH').format(dateTime);
-  final minute = DateFormat('mm').format(dateTime);
-  return Text(
-    '$hour:$minute',
-    style: TextStyle(
-      fontFamily: 'Roboto',
-      fontWeight: largeFontWeight,
-      fontSize: largeFontSize,
-      letterSpacing: -2.0,
-      color: color,
-    ),
-  );
+  Widget _buildTime24(DateTime dateTime, Color color) {
+    final hour = DateFormat('HH').format(dateTime);
+    final minute = DateFormat('mm').format(dateTime);
+    return Text(
+      '$hour:$minute',
+      style: TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: largeFontWeight,
+        fontSize: largeFontSize,
+        letterSpacing: -2.0,
+        color: color,
+      ),
+    );
+  }
 }

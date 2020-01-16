@@ -22,18 +22,18 @@ class TimeScale extends StatefulWidget {
 }
 
 class _TimeScaleState extends State<TimeScale> {
-  ScrollController controller = ScrollController();
-  StreamSubscription subscription;
-  double containerHeight = 0;
+  ScrollController _controller = ScrollController();
+  StreamSubscription _subscription;
+  double _containerHeight = 0;
 
   void updateHeight(double height) {
-    containerHeight = height;
+    _containerHeight = height;
     _scrollToPositionFor(DateTime.now(), animated: false);
   }
 
   @override
   void didChangeDependencies() {
-    subscription = Provider.of<ClockBloc>(context).animationDateTime.listen(
+    _subscription = Provider.of<ClockBloc>(context).animationDateTime.listen(
       (dateTime) {
         _scrollToPositionFor(dateTime);
       },
@@ -43,8 +43,8 @@ class _TimeScaleState extends State<TimeScale> {
 
   @override
   void dispose() {
-    controller.dispose();
-    subscription.cancel();
+    _controller.dispose();
+    _subscription.cancel();
     super.dispose();
   }
 
@@ -58,7 +58,7 @@ class _TimeScaleState extends State<TimeScale> {
       padding: EdgeInsets.only(left: paddingLeft),
       child: ListView.builder(
         physics: NeverScrollableScrollPhysics(),
-        controller: controller,
+        controller: _controller,
         itemBuilder: (context, index) {
           return Row(
             children: [
@@ -124,14 +124,17 @@ class _TimeScaleState extends State<TimeScale> {
     final newOffset = _calculatePosition(dateTime);
     // checking haveDimensions prevents a NoSuchMethodError: The method '>'
     // was called on null. when calling controller.animateTo()
-    if (controller != null &&
-        controller.hasClients &&
-        controller.position.haveDimensions) {
+    if (_controller != null &&
+        _controller.hasClients &&
+        _controller.position.haveDimensions) {
       if (animated) {
-        controller.animateTo(newOffset,
-            duration: animationDuration, curve: animationCurve);
+        _controller.animateTo(
+          newOffset,
+          duration: animationDuration,
+          curve: animationCurve,
+        );
       } else {
-        controller.jumpTo(newOffset);
+        _controller.jumpTo(newOffset);
       }
     }
   }
@@ -146,7 +149,7 @@ class _TimeScaleState extends State<TimeScale> {
     return scaleStart +
         minutes * pixelsPerMinute +
         oneDay -
-        (containerHeight / 2) +
+        (_containerHeight / 2) +
         (pixelsPerMinute / 2);
   }
 }

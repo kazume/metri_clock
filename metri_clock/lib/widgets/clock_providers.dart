@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 /// down the widget tree.
 class ClockProviders extends StatelessWidget {
   final ClockModel clockModel;
-  final clockBloc = ClockBloc();
+  final _clockBloc = ClockBloc();
 
   ClockProviders(this.clockModel);
 
@@ -17,14 +17,11 @@ class ClockProviders extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<ClockBloc>(
-          create: (_) => clockBloc,
+          create: (_) => _clockBloc,
           dispose: (_, bloc) => bloc.dispose(),
         ),
         ChangeNotifierProvider<ClockModel>.value(
           value: clockModel,
-        ),
-        Provider<GlobalKey>(
-          create: (_) => GlobalKey(),
         ),
       ],
       child: Clock(),
