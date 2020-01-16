@@ -12,20 +12,18 @@ class Clock extends StatefulWidget {
   _ClockState createState() => _ClockState();
 }
 
-class _ClockState extends State<Clock> with ChangeNotifier {
+class _ClockState extends State<Clock> {
   final containerKey = GlobalKey();
-  double containerHeight = 0;
   TimeScale timeScale = TimeScale(key: UniqueKey());
 
   @override
-  void initState() {
-    addListener((){});
-    WidgetsBinding.instance.addPostFrameCallback((context) {
-      containerHeight = containerKey.currentContext.size.height;
-      timeScale.updateHeight(containerHeight);
-      notifyListeners();
-    });
-    super.initState();
+  void didChangeDependencies() {
+    // get the height of the ClockCustomizer and forward it to the TimeScale
+    // so it calculates the position of the DateTime correctly
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => timeScale.updateHeight(containerKey.currentContext.size.height),
+    );
+    super.didChangeDependencies();
   }
 
   @override
@@ -50,7 +48,7 @@ class _ClockState extends State<Clock> with ChangeNotifier {
             child: Padding(
               padding: EdgeInsets.only(left: paddingLeft),
               child: Container(
-                height: 3,
+                height: pixelsPerMinute,
                 width: DashWidth.LONG.toDouble(),
                 color: colors[ThemeElement.primary],
               ),

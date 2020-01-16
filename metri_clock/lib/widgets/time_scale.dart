@@ -22,49 +22,23 @@ class TimeScale extends StatefulWidget {
 }
 
 class _TimeScaleState extends State<TimeScale> {
-  ScrollController controller;
+  ScrollController controller = ScrollController();
   StreamSubscription subscription;
-  double containerHeight;
+  double containerHeight = 0;
 
   void updateHeight(double height) {
     containerHeight = height;
-    _setInitialScrollPosition(height);
+    _scrollToPositionFor(DateTime.now(), animated: false);
   }
 
   @override
   void didChangeDependencies() {
-    //final screenHeight = MediaQuery.of(context).size.height;
-    controller = ScrollController(
-      initialScrollOffset: calculatePosition(
-        DateTime.now(),
-        containerHeight,
-      ),
-    );
     subscription = Provider.of<ClockBloc>(context).animationDateTime.listen(
       (dateTime) {
-        final newOffset = calculatePosition(dateTime, containerHeight);
-        if (controller != null &&
-            controller.hasClients &&
-            controller.position.haveDimensions) {
-          // checking haveDimensions prevents a NoSuchMethodError: The method '>'
-          // was called on null. when calling controller.animateTo()
-          controller.animateTo(newOffset,
-              duration: animationDuration, curve: animationCurve);
-        }
+        _scrollToPositionFor(dateTime);
       },
     );
     super.didChangeDependencies();
-  }
-
-  void _setInitialScrollPosition(double position) {
-    final newOffset = calculatePosition(DateTime.now(), containerHeight);
-    if (controller != null &&
-        controller.hasClients &&
-        controller.position.haveDimensions) {
-      // checking haveDimensions prevents a NoSuchMethodError: The method '>'
-      // was called on null. when calling controller.animateTo()
-      controller.jumpTo(newOffset);
-    }
   }
 
   @override
@@ -80,10 +54,6 @@ class _TimeScaleState extends State<TimeScale> {
         Theme.of(context).brightness == Brightness.dark || useDarkThemeOnly
             ? darkTheme
             : lightTheme;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final pixelsPerMinute = (screenHeight / 24 / 5).round().toDouble();
-    print('screenheight = $screenHeight');
-    print('pixelsPerMinute = $pixelsPerMinute');
     return Padding(
       padding: EdgeInsets.only(left: paddingLeft),
       child: ListView.builder(
@@ -95,43 +65,20 @@ class _TimeScaleState extends State<TimeScale> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.medium(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
+                  Dash.short(),
+                  Dash.short(),
+                  Dash.medium(),
+                  Dash.short(),
+                  Dash.short(),
                   Dash.long(
-                    pixelsPerMinute: pixelsPerMinute,
                     themeElement: ThemeElement.timeScalePrimary,
                   ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.medium(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.short(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
-                  Dash.long(
-                    pixelsPerMinute: pixelsPerMinute,
-                  ),
+                  Dash.short(),
+                  Dash.short(),
+                  Dash.medium(),
+                  Dash.short(),
+                  Dash.short(),
+                  Dash.long(),
                 ],
               ),
               Padding(
@@ -174,22 +121,34 @@ class _TimeScaleState extends State<TimeScale> {
       ),
     );
   }
-}
 
-double calculatePosition(
-  DateTime dateTime,
-  double screenHeight,
-) {
-  if (screenHeight == null) return 0.0;
-  final pixelsPerMinute = (screenHeight / 24 / 5).round().toDouble();
-  // the scale begins 25' before 0
-  final scaleStart = pixelsPerMinute * 25;
-  // skip a day to allow for enough buffer before 0
-  final oneDay = pixelsPerMinute * 60 * 24;
-  final minutes = dateTime.hour * 60 + dateTime.minute;
-  return scaleStart +
-      minutes * pixelsPerMinute +
-      oneDay -
-      (screenHeight / 2) + pixelsPerMinute/2/* +
-      pixelsPerMinute*/;
+  void _scrollToPositionFor(DateTime dateTime, {bool animated = true}) {
+    final newOffset = _calculatePosition(dateTime);
+    // checking haveDimensions prevents a NoSuchMethodError: The method '>'
+    // was called on null. when calling controller.animateTo()
+    if (controller != null &&
+        controller.hasClients &&
+        controller.position.haveDimensions) {
+      if (animated) {
+        controller.animateTo(newOffset,
+            duration: animationDuration, curve: animationCurve);
+      } else {
+        controller.jumpTo(newOffset);
+      }
+    }
+  }
+
+  double _calculatePosition(DateTime dateTime) {
+    // the scale starts 25' before 0
+    final scaleStart = pixelsPerMinute * 25;
+    // skip a day to allow for enough buffer before 0
+    final oneDay = pixelsPerMinute * 60 * 24;
+    final minutes = dateTime.hour * 60 + dateTime.minute;
+
+    return scaleStart +
+        minutes * pixelsPerMinute +
+        oneDay -
+        (containerHeight / 2) +
+        (pixelsPerMinute / 2);
+  }
 }

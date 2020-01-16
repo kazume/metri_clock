@@ -2,26 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:metri_clock/config.dart';
 import 'package:metri_clock/themes/themes.dart';
 
+const pixelsPerMinute = 3.0;
+
 /// A Dash on the TimeScale.
 class Dash extends StatelessWidget {
-  final double pixelsPerMinute;
   final ThemeElement themeElement;
   final double dashWidth;
 
-  Dash.short({
-    @required this.pixelsPerMinute,
-    this.themeElement = ThemeElement.timeScaleSecondary,
-  }) : dashWidth = DashWidth.SHORT.toDouble();
+  Dash.short({this.themeElement = ThemeElement.timeScaleSecondary})
+      : dashWidth = DashWidth.SHORT.toDouble();
 
-  Dash.medium({
-    @required this.pixelsPerMinute,
-    this.themeElement = ThemeElement.timeScaleSecondary,
-  }) : dashWidth = DashWidth.MEDIUM.toDouble();
+  Dash.medium({this.themeElement = ThemeElement.timeScaleSecondary})
+      : dashWidth = DashWidth.MEDIUM.toDouble();
 
-  Dash.long({
-    @required this.pixelsPerMinute,
-    this.themeElement = ThemeElement.timeScaleSecondary,
-  }) : dashWidth = DashWidth.LONG.toDouble();
+  Dash.long({this.themeElement = ThemeElement.timeScaleSecondary})
+      : dashWidth = DashWidth.LONG.toDouble();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +31,7 @@ class Dash extends StatelessWidget {
         alignment: Alignment.topLeft,
         child: Container(
           width: dashWidth,
-          height: 2,
+          height: pixelsPerMinute,
           color: colors[themeElement],
         ),
       ),
